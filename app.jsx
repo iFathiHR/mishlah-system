@@ -68,8 +68,8 @@ function Login({onLogin}){
       <div style={S.loginCard}>
         <div style={{textAlign:"center",marginBottom:22}}>
           <div style={{fontSize:48,marginBottom:4}}>🎓</div>
-          <h1 style={{fontSize:19,fontWeight:800,color:"#f1f5f9",margin:0}}>نظام تسليم المشالح</h1>
-          <p style={{fontSize:11,color:"#475569",margin:"4px 0 0"}}>بكالوريوس — الجامعة الإسلامية بالمدينة المنورة</p>
+          <h1 style={{fontSize:22,fontWeight:800,color:"#f1f5f9",margin:0}}>نظام تسليم المشالح</h1>
+          <p style={{fontSize:12,color:"#cbd5e1",margin:"6px 0 0"}}>بكالوريوس — الجامعة الإسلامية بالمدينة المنورة</p>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
           <label style={S.lbl}>اسم المستخدم</label>
@@ -178,7 +178,11 @@ function MainApp({user,onLogout}){
   const cur=allStudents[day]?.[col]||[];
   const filtered=cur.filter(s=>{
     const nm=getName(s);
-    if(search&&!nm.includes(search)&&!s.id.includes(search))return false;
+    if(search){
+      const q=search.trim();
+      const rn=String(s.rowNum||"");
+      if(!nm.includes(q)&&!s.id.includes(q)&&!rn.includes(q))return false;
+    }
     if(filter==="present"&&!att[s.key])return false;
     if(filter==="absent"&&att[s.key])return false;
     if(filter==="cer-yes"&&cer[s.key]!=="yes")return false;
@@ -213,17 +217,17 @@ function MainApp({user,onLogout}){
   if(screen==="add") return <AddStudents onBack={()=>setScreen("list")} onAdd={addCustom} existing={customStudents||[]}/>;
 
   return(
-    <div dir="rtl" style={{minHeight:"100vh",background:"#080d19",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif"}}>
+    <div dir="rtl" style={{minHeight:"100vh",background:"#0b1221",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif"}}>
       <header style={S.hdr}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
           <div style={{display:"flex",alignItems:"center",gap:7}}>
-            <div style={{width:30,height:30,borderRadius:8,background:"#141b2d",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>🎓</div>
+            <div style={{width:38,height:38,borderRadius:10,background:"#1e3a8a",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>🎓</div>
             <div>
-              <div style={{fontSize:12,fontWeight:700,color:"#f1f5f9"}}>تسليم المشالح</div>
-              <div style={{fontSize:9,color:"#475569"}}>{user.name} <span style={{color:P.color}}>{P.icon} {P.label}</span></div>
+              <div style={{fontSize:14,fontWeight:800,color:"#f1f5f9"}}>تسليم المشالح</div>
+              <div style={{fontSize:11,color:"#cbd5e1",fontWeight:500}}>{user.name} <span style={{color:P.color}}>{P.icon} {P.label}</span></div>
             </div>
           </div>
-          <div style={{display:"flex",gap:2}}>
+          <div style={{display:"flex",gap:4}}>
             {P.canAddStudents&&<HB icon="➕" onClick={()=>setScreen("add")}/>}
             {P.canStats&&<HB icon="📊" onClick={()=>setScreen("stats")}/>}
             {P.canUsers&&<HB icon="👥" onClick={()=>setScreen("users")}/>}
@@ -232,18 +236,18 @@ function MainApp({user,onLogout}){
             <HB icon="🚪" onClick={onLogout}/>
           </div>
         </div>
-        <div style={{display:"flex",gap:2}}>
+        <div style={{display:"flex",gap:4}}>
           {[0,1,2,3,4].map(di=>{
             const ds=allStudents[di]?Object.values(allStudents[di]).flat():[];
             const da=ds.filter(s=>att[s.key]).length;const act=day===di;const pct=ds.length?da/ds.length*100:0;
             return(
               <button key={di} onClick={()=>setDay(di)} style={{
-                flex:1,padding:"5px 2px 7px",borderRadius:7,border:"none",cursor:"pointer",fontFamily:"inherit",position:"relative",overflow:"hidden",
-                background:act?"#1d4ed8":"#111827",color:act?"#fff":"#64748b",fontSize:10,fontWeight:act?700:500
+                flex:1,padding:"10px 4px 13px",borderRadius:10,border:"none",cursor:"pointer",fontFamily:"inherit",position:"relative",overflow:"hidden",
+                background:act?"#2563eb":"#1a2436",color:act?"#fff":"#cbd5e1",fontSize:13,fontWeight:act?800:600
               }}>
                 <div>{DAY_LABELS[di]}</div>
-                <div style={{fontSize:8,marginTop:1,opacity:0.7}}>{da}/{ds.length}</div>
-                <div style={{position:"absolute",bottom:0,left:0,height:2,width:pct+"%",background:act?"#93c5fd":"#1e3a5f",transition:"width 0.3s"}}/>
+                <div style={{fontSize:10,marginTop:3,opacity:0.85,fontWeight:600}}>{da}/{ds.length}</div>
+                <div style={{position:"absolute",bottom:0,left:0,height:3,width:pct+"%",background:act?"#93c5fd":"#2563eb",transition:"width 0.3s"}}/>
               </button>
             );
           })}
@@ -252,103 +256,103 @@ function MainApp({user,onLogout}){
 
       <div style={S.sub}>
         {dayCols.length>1&&(
-          <div style={{display:"flex",gap:3,marginBottom:5,overflowX:"auto"}}>
+          <div style={{display:"flex",gap:6,marginBottom:8,overflowX:"auto",paddingBottom:4}}>
             {dayCols.map(ci=>{
               const cs=allStudents[day][ci]||[];const ca=cs.filter(s=>att[s.key]).length;const act=col===ci;
               return(
                 <button key={ci} onClick={()=>setCol(ci)} style={{
-                  padding:"4px 10px",borderRadius:6,border:act?"1.5px solid #3b82f6":"1.5px solid #1a2236",
-                  background:act?"#172554":"#111827",color:act?"#93c5fd":"#475569",
-                  fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"
+                  padding:"9px 14px",borderRadius:10,border:act?"2px solid #3b82f6":"1.5px solid #334155",
+                  background:act?"#1e40af":"#1a2436",color:act?"#fff":"#cbd5e1",
+                  fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"
                 }}>{DATA.c[ci]||"مخصص"} ({ca}/{cs.length})</button>
               );
             })}
           </div>
         )}
-        <input placeholder="🔍 بحث..." value={search} onChange={e=>setSearch(e.target.value)} style={{...S.inp,marginBottom:4,fontSize:12,padding:"8px 10px"}}/>
-        <div style={{display:"flex",gap:2,flexWrap:"wrap",marginBottom:3}}>
+        <input placeholder="🔍 بحث بالاسم أو الرقم الجامعي أو التسلسلي..." value={search} onChange={e=>setSearch(e.target.value)} style={{...S.inp,marginBottom:6,fontSize:14,padding:"12px 14px",fontWeight:500}}/>
+        <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:8}}>
           {[["all","الكل"],["present","حاضر"],["absent","غائب"],["cer-yes","يحضر الحفل"],["cer-no","لا يحضر"],["delivered","مُسلّم"],["not-del","غير مُسلّم"]].map(([v,l])=>(
             <button key={v} onClick={()=>setFilter(v)} style={{
-              padding:"3px 7px",borderRadius:4,border:"none",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit",
-              background:filter===v?"#1d4ed8":"#111827",color:filter===v?"#fff":"#475569"
+              padding:"7px 11px",borderRadius:8,border:"none",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
+              background:filter===v?"#2563eb":"#1a2436",color:filter===v?"#fff":"#cbd5e1"
             }}>{l}</button>
           ))}
         </div>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{fontSize:11,color:"#475569"}}>الحضور: <b style={{color:"#60a5fa"}}>{curAtt}</b>/{cur.length}</span>
+          <span style={{fontSize:14,color:"#cbd5e1",fontWeight:700}}>الحضور: <b style={{color:"#60a5fa",fontSize:16}}>{curAtt}</b>/{cur.length}</span>
           {P.canBulk&&(
-            <div style={{display:"flex",gap:3}}>
-              <TB label="✓ تحضير الكل" bg="#14532d" fg="#86efac" onClick={()=>bulkMark(filtered.map(s=>s.key))}/>
-              <TB label="✗ إلغاء الكل" bg="#450a0a" fg="#fca5a5" onClick={()=>bulkUnmark(filtered.map(s=>s.key))}/>
+            <div style={{display:"flex",gap:6}}>
+              <TB label="✓ تحضير الكل" bg="#16a34a" fg="#fff" onClick={()=>bulkMark(filtered.map(s=>s.key))}/>
+              <TB label="✗ إلغاء الكل" bg="#dc2626" fg="#fff" onClick={()=>bulkUnmark(filtered.map(s=>s.key))}/>
             </div>
           )}
         </div>
       </div>
 
-      <div style={{padding:"2px 10px 60px"}}>
+      <div style={{padding:"6px 10px 80px"}}>
         {filtered.map((s,i)=>{
           const pr=!!att[s.key];const cv=cer[s.key];const dl=!!rec[s.key];const nm=getName(s);const isEd=editKey===s.key;
           return(
-            <div key={s.key} style={{background:pr?"#071a0e":"#111827",border:pr?"1px solid #16532444":"1px solid #1a2236",borderRadius:9,marginBottom:3}}>
-              <div style={{display:"flex",alignItems:"center",gap:7,padding:"8px 9px"}}>
-                <div style={{width:22,height:22,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",
-                  background:pr?"#22c55e":"#1a2236",color:pr?"#fff":"#475569",fontSize:10,fontWeight:700,flexShrink:0
+            <div key={s.key} style={{background:pr?"#0d2818":"#1a2436",border:pr?"2px solid #16a34a":"1px solid #2a3548",borderRadius:12,marginBottom:6}}>
+              <div style={{display:"flex",alignItems:"center",gap:10,padding:"12px 12px"}}>
+                <div style={{width:32,height:32,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",
+                  background:pr?"#22c55e":"#2a3548",color:pr?"#fff":"#475569",fontSize:12,fontWeight:800,flexShrink:0
                 }}>{pr?"✓":(s.rowNum||i+1)}</div>
                 <div style={{flex:1,minWidth:0}}>
                   {isEd?(
                     <div style={{display:"flex",gap:3}}>
                       <input value={editVal} onChange={e=>setEditVal(e.target.value)} style={{...S.inp,padding:"3px 6px",fontSize:11,flex:1}}/>
                       <TB label="حفظ" bg="#1d4ed8" fg="#fff" onClick={()=>saveName(s.key,editVal)}/>
-                      <TB label="✗" bg="#1a2236" fg="#94a3b8" onClick={()=>setEditKey(null)}/>
+                      <TB label="✗" bg="#2a3548" fg="#94a3b8" onClick={()=>setEditKey(null)}/>
                     </div>
                   ):(
                     <React.Fragment>
-                      <div style={{fontSize:12,fontWeight:600,color:pr?"#bbf7d0":"#e2e8f0",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                      <div style={{fontSize:14,fontWeight:700,color:pr?"#86efac":"#e2e8f0",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                         {nm}
-                        {P.canEditNames&&<button onClick={()=>{setEditKey(s.key);setEditVal(nm);}} style={{background:"none",border:"none",color:"#334155",fontSize:9,cursor:"pointer",marginRight:3}}>✏️</button>}
+                        {P.canEditNames&&<button onClick={()=>{setEditKey(s.key);setEditVal(nm);}} style={{background:"none",border:"none",color:"#64748b",fontSize:9,cursor:"pointer",marginRight:3}}>✏️</button>}
                         {s.src==="custom"&&<span style={{fontSize:8,color:"#f59e0b",marginRight:3}}>مضاف</span>}
                         {s.src==="custom"&&P.canAddStudents&&<button onClick={()=>delCustom(s.key)} style={{background:"none",border:"none",color:"#7f1d1d",fontSize:9,cursor:"pointer"}}>🗑</button>}
                       </div>
-                      <div style={{fontSize:9,color:"#475569",marginTop:1}}>{s.id} • {s.nat}</div>
+                      <div style={{fontSize:11,color:"#94a3b8",marginTop:3,fontWeight:500}}>{s.id} • {s.nat}</div>
                     </React.Fragment>
                   )}
                 </div>
                 <button onClick={()=>{if(pr&&!P.canUnmark)return;if(!pr&&!P.canMark)return;toggleAtt(s.key);}} style={{
-                  padding:"4px 9px",borderRadius:5,border:"none",fontSize:9,fontWeight:700,fontFamily:"inherit",minWidth:48,
+                  padding:"8px 14px",borderRadius:8,border:"none",fontSize:12,fontWeight:800,fontFamily:"inherit",minWidth:68,
                   cursor:(pr&&!P.canUnmark)?"not-allowed":"pointer",
-                  background:pr?"#22c55e":"#1a2236",color:pr?"#fff":"#64748b",opacity:(pr&&!P.canUnmark)?0.5:1
+                  background:pr?"#16a34a":"#475569",color:pr?"#fff":"#e2e8f0",opacity:(pr&&!P.canUnmark)?0.6:1
                 }}>{pr?"حاضر ✓":"غائب"}</button>
               </div>
               {pr&&(
-                <div style={{display:"flex",borderTop:"1px solid #1a223644"}}>
-                  <div style={{flex:1,padding:"6px 9px",borderLeft:"1px solid #1a223644"}}>
-                    <div style={{fontSize:8,color:"#475569",marginBottom:3,fontWeight:600}}>🎓 الحفل</div>
+                <div style={{display:"flex",borderTop:"1px solid #2a354844"}}>
+                  <div style={{flex:1,padding:"10px 12px",borderLeft:"1px solid #2a354888"}}>
+                    <div style={{fontSize:10,color:"#cbd5e1",marginBottom:5,fontWeight:700}}>🎓 الحفل</div>
                     <div style={{display:"flex",gap:2}}>
-                      <button onClick={()=>setCerVal(s.key,"yes")} style={{flex:1,padding:3,borderRadius:4,border:"none",fontSize:9,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
-                        background:cv==="yes"?"#1d4ed8":"#1a2236",color:cv==="yes"?"#fff":"#475569"}}>نعم 🎉</button>
-                      <button onClick={()=>setCerVal(s.key,"no")} style={{flex:1,padding:3,borderRadius:4,border:"none",fontSize:9,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
-                        background:cv==="no"?"#991b1b":"#1a2236",color:cv==="no"?"#fca5a5":"#475569"}}>لا ✗</button>
+                      <button onClick={()=>setCerVal(s.key,"yes")} style={{flex:1,padding:"8px 4px",borderRadius:6,border:"none",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
+                        background:cv==="yes"?"#1d4ed8":"#2a3548",color:cv==="yes"?"#fff":"#475569"}}>نعم 🎉</button>
+                      <button onClick={()=>setCerVal(s.key,"no")} style={{flex:1,padding:"8px 4px",borderRadius:6,border:"none",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
+                        background:cv==="no"?"#991b1b":"#2a3548",color:cv==="no"?"#fca5a5":"#475569"}}>لا ✗</button>
                     </div>
                   </div>
-                  <div style={{flex:1,padding:"6px 9px"}}>
-                    <div style={{fontSize:8,color:"#475569",marginBottom:3,fontWeight:600}}>📦 التسليم</div>
+                  <div style={{flex:1,padding:"10px 12px"}}>
+                    <div style={{fontSize:10,color:"#cbd5e1",marginBottom:5,fontWeight:700}}>📦 التسليم</div>
                     <button onClick={()=>toggleRec(s.key)} style={{
-                      width:"100%",padding:3,borderRadius:4,border:"none",fontSize:9,fontWeight:700,fontFamily:"inherit",
+                      width:"100%",padding:"8px 4px",borderRadius:6,border:"none",fontSize:11,fontWeight:700,fontFamily:"inherit",
                       cursor:(dl&&!P.canUnreceipt)?"not-allowed":"pointer",
-                      background:dl?"#854d0e":"#1a2236",color:dl?"#fde68a":"#475569",opacity:(dl&&!P.canUnreceipt)?0.5:1
+                      background:dl?"#854d0e":"#2a3548",color:dl?"#fde68a":"#475569",opacity:(dl&&!P.canUnreceipt)?0.5:1
                     }}>{dl?"تم ✓":"لم يُسلّم"}</button>
                   </div>
                 </div>
               )}
               {pr&&att[s.key]?.by&&(
-                <div style={{padding:"0 9px 5px",fontSize:8,color:"#283040"}}>
+                <div style={{padding:"0 12px 8px",fontSize:10,color:"#64748b",fontWeight:500}}>
                   {att[s.key].by} — {new Date(att[s.key].at).toLocaleTimeString("ar-SA",{hour:"2-digit",minute:"2-digit"})}
                 </div>
               )}
             </div>
           );
         })}
-        {filtered.length===0&&<div style={{textAlign:"center",padding:40,color:"#283040"}}><div style={{fontSize:32}}>📋</div><div style={{fontSize:12,marginTop:6}}>لا توجد نتائج</div></div>}
+        {filtered.length===0&&<div style={{textAlign:"center",padding:40,color:"#64748b"}}><div style={{fontSize:32}}>📋</div><div style={{fontSize:12,marginTop:6}}>لا توجد نتائج</div></div>}
       </div>
     </div>
   );
@@ -400,25 +404,25 @@ function AddStudents({onBack,onAdd,existing}){
   };
 
   return(
-    <div dir="rtl" style={{minHeight:"100vh",background:"#080d19",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif",padding:14}}>
+    <div dir="rtl" style={{minHeight:"100vh",background:"#0b1221",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif",padding:14}}>
       <div style={{maxWidth:600,margin:"0 auto"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <h1 style={{fontSize:17,fontWeight:800,margin:0}}>➕ إضافة طلاب</h1>
           <button onClick={onBack} style={S.bkBtn}>← رجوع</button>
         </div>
-        {msg&&<div style={{background:"#111827",border:"1px solid #1a2236",borderRadius:8,padding:"8px 12px",marginBottom:10,fontSize:12,color:"#86efac",textAlign:"center"}}>{msg}</div>}
+        {msg&&<div style={{background:"#1a2436",border:"1px solid #2a3548",borderRadius:8,padding:"8px 12px",marginBottom:10,fontSize:12,color:"#86efac",textAlign:"center"}}>{msg}</div>}
         <div style={S.card}>
           <div style={{fontSize:11,fontWeight:700,marginBottom:6}}>📅 اليوم والكلية</div>
           <div style={{display:"flex",gap:2,marginBottom:6}}>
-            {DAY_LABELS.map((d,i)=>(<button key={i} onClick={()=>setDayIdx(i)} style={{flex:1,padding:5,borderRadius:5,border:"none",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit",background:dayIdx===i?"#1d4ed8":"#1a2236",color:dayIdx===i?"#fff":"#475569"}}>{d}</button>))}
+            {DAY_LABELS.map((d,i)=>(<button key={i} onClick={()=>setDayIdx(i)} style={{flex:1,padding:5,borderRadius:5,border:"none",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit",background:dayIdx===i?"#1d4ed8":"#2a3548",color:dayIdx===i?"#fff":"#475569"}}>{d}</button>))}
           </div>
           <div style={{display:"flex",gap:2,flexWrap:"wrap"}}>
-            {DATA.c.map((c,i)=>(<button key={i} onClick={()=>setColIdx(i)} style={{padding:"4px 8px",borderRadius:5,border:colIdx===i?"1.5px solid #3b82f6":"1.5px solid #1a2236",background:colIdx===i?"#172554":"transparent",color:colIdx===i?"#93c5fd":"#475569",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{c}</button>))}
+            {DATA.c.map((c,i)=>(<button key={i} onClick={()=>setColIdx(i)} style={{padding:"4px 8px",borderRadius:5,border:colIdx===i?"1.5px solid #3b82f6":"1.5px solid #2a3548",background:colIdx===i?"#172554":"transparent",color:colIdx===i?"#93c5fd":"#475569",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{c}</button>))}
           </div>
         </div>
         <div style={{display:"flex",gap:2,marginBottom:10}}>
           {[["single","➕ فردي"],["bulk","📝 جماعي"],["file","📄 ملف"],["group","👥 مجموعة"]].map(([v,l])=>(
-            <button key={v} onClick={()=>setMode(v)} style={{flex:1,padding:8,borderRadius:8,border:"none",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",background:mode===v?"#1d4ed8":"#111827",color:mode===v?"#fff":"#64748b"}}>{l}</button>
+            <button key={v} onClick={()=>setMode(v)} style={{flex:1,padding:8,borderRadius:8,border:"none",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",background:mode===v?"#1d4ed8":"#1a2436",color:mode===v?"#fff":"#64748b"}}>{l}</button>
           ))}
         </div>
         {mode==="single"&&<div style={S.card}>
@@ -430,18 +434,18 @@ function AddStudents({onBack,onAdd,existing}){
           </div>
         </div>}
         {mode==="bulk"&&<div style={S.card}>
-          <div style={{fontSize:10,color:"#475569",marginBottom:6}}>سطر لكل طالب: الاسم، الرقم، الجنسية</div>
+          <div style={{fontSize:10,color:"#94a3b8",marginBottom:6}}>سطر لكل طالب: الاسم، الرقم، الجنسية</div>
           <textarea value={bulk} onChange={e=>setBulk(e.target.value)} rows={8} placeholder={"أحمد محمد، 441001234، السعودية\nعلي خالد، 441005678، مصر"} style={{...S.inp,resize:"vertical",lineHeight:1.8}}/>
           <button onClick={addBulk} style={{...S.pBtn,marginTop:6}}>إضافة الكل</button>
         </div>}
         {mode==="file"&&<div style={S.card}>
-          <div style={{fontSize:10,color:"#475569",marginBottom:6}}>ملف CSV أو TXT — الأعمدة: الاسم، الرقم، الجنسية</div>
+          <div style={{fontSize:10,color:"#94a3b8",marginBottom:6}}>ملف CSV أو TXT — الأعمدة: الاسم، الرقم، الجنسية</div>
           <input ref={fileRef} type="file" accept=".csv,.txt,.tsv" onChange={handleFile} style={{display:"none"}}/>
           <button onClick={()=>fileRef.current?.click()} style={{...S.pBtn,background:"#334155",marginBottom:8}}>📁 اختر ملف</button>
           {filePreview.length>0&&<React.Fragment>
-            <div style={{maxHeight:160,overflowY:"auto",background:"#080d19",borderRadius:6,padding:6,marginBottom:6}}>
-              {filePreview.slice(0,8).map((row,i)=><div key={i} style={{fontSize:9,color:"#94a3b8",padding:"2px 0",borderBottom:"1px solid #1a2236"}}>{row.join(" | ")}</div>)}
-              {filePreview.length>8&&<div style={{fontSize:8,color:"#334155"}}>...و{filePreview.length-8} آخرين</div>}
+            <div style={{maxHeight:160,overflowY:"auto",background:"#0b1221",borderRadius:6,padding:6,marginBottom:6}}>
+              {filePreview.slice(0,8).map((row,i)=><div key={i} style={{fontSize:9,color:"#94a3b8",padding:"2px 0",borderBottom:"1px solid #2a3548"}}>{row.join(" | ")}</div>)}
+              {filePreview.length>8&&<div style={{fontSize:8,color:"#64748b"}}>...و{filePreview.length-8} آخرين</div>}
             </div>
             <button onClick={importFile} style={S.pBtn}>📥 استيراد {filePreview.length} طالب</button>
           </React.Fragment>}
@@ -460,7 +464,7 @@ function AddStudents({onBack,onAdd,existing}){
 function Stats({stats,P,onBack,onReset}){
   const pct=(a,t)=>t>0?Math.round(a/t*100):0;
   return(
-    <div dir="rtl" style={{minHeight:"100vh",background:"#080d19",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif",padding:14}}>
+    <div dir="rtl" style={{minHeight:"100vh",background:"#0b1221",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif",padding:14}}>
       <div style={{maxWidth:600,margin:"0 auto"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
           <h1 style={{fontSize:17,fontWeight:800,margin:0}}>📊 الإحصائيات</h1>
@@ -485,9 +489,9 @@ function Stats({stats,P,onBack,onReset}){
             </div>
             <PB v={ds.attended} t={ds.total} c="#3b82f6"/>
             {Object.entries(ds.colleges).map(([ci,cc])=>(
-              <div key={ci} style={{padding:"4px 0",borderBottom:"1px solid #1a2236",display:"flex",justifyContent:"space-between",fontSize:10,marginTop:2}}>
+              <div key={ci} style={{padding:"4px 0",borderBottom:"1px solid #2a3548",display:"flex",justifyContent:"space-between",fontSize:10,marginTop:2}}>
                 <span style={{color:"#94a3b8",fontWeight:600}}>{cc.name}</span>
-                <div style={{display:"flex",gap:8,color:"#475569"}}>
+                <div style={{display:"flex",gap:8,color:"#94a3b8"}}>
                   <span>✅{cc.attended}/{cc.total}</span><span style={{color:"#a78bfa"}}>🎉{cc.cerYes}</span><span style={{color:"#fbbf24"}}>📦{cc.received}</span>
                 </div>
               </div>
@@ -510,16 +514,16 @@ function UsersView({onBack}){
   const del=(name)=>{if(!confirm("حذف "+name+"؟"))return;const n={...users};delete n[name];store.set(SK.usr,n);setUsers(n);};
 
   return(
-    <div dir="rtl" style={{minHeight:"100vh",background:"#080d19",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif",padding:14}}>
+    <div dir="rtl" style={{minHeight:"100vh",background:"#0b1221",color:"#e2e8f0",fontFamily:"Tajawal,sans-serif",padding:14}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
         <h1 style={{fontSize:17,fontWeight:800,margin:0}}>👥 المستخدمون</h1>
         <button onClick={onBack} style={S.bkBtn}>← رجوع</button>
       </div>
-      <div style={{fontSize:11,color:"#475569",fontWeight:700,marginBottom:4}}>حسابات مدمجة</div>
+      <div style={{fontSize:11,color:"#94a3b8",fontWeight:700,marginBottom:4}}>حسابات مدمجة</div>
       {Object.entries(BUILTIN).map(([u,d])=>(
-        <div key={u} style={S.uCard}><div><div style={{fontSize:12,fontWeight:600}}>{d.displayName}</div><div style={{fontSize:9,color:ROLES[d.role].color}}>{ROLES[d.role].icon} {ROLES[d.role].label} — {u}</div></div><span style={{fontSize:9,color:"#283040"}}>مدمج</span></div>
+        <div key={u} style={S.uCard}><div><div style={{fontSize:12,fontWeight:600}}>{d.displayName}</div><div style={{fontSize:9,color:ROLES[d.role].color}}>{ROLES[d.role].icon} {ROLES[d.role].label} — {u}</div></div><span style={{fontSize:9,color:"#64748b"}}>مدمج</span></div>
       ))}
-      <div style={{fontSize:11,color:"#475569",fontWeight:700,margin:"10px 0 4px"}}>حسابات إضافية</div>
+      <div style={{fontSize:11,color:"#94a3b8",fontWeight:700,margin:"10px 0 4px"}}>حسابات إضافية</div>
       {Object.entries(users).map(([u,d])=>(
         <div key={u} style={S.uCard}><div><div style={{fontSize:12,fontWeight:600}}>{d.displayName}</div><div style={{fontSize:9,color:ROLES[d.role]?.color}}>{ROLES[d.role]?.icon} {ROLES[d.role]?.label}</div></div><TB label="حذف" bg="#450a0a" fg="#fca5a5" onClick={()=>del(u)}/></div>
       ))}
@@ -530,7 +534,7 @@ function UsersView({onBack}){
           <input placeholder="كلمة المرور" value={np} onChange={e=>setNp(e.target.value)} style={{...S.inp,fontSize:12}}/>
           <div style={{display:"flex",gap:2}}>
             {Object.entries(ROLES).filter(([k])=>k!=="admin").map(([k,v])=>(
-              <button key={k} onClick={()=>setNr(k)} style={{flex:1,padding:5,borderRadius:5,border:nr===k?"1.5px solid "+v.color:"1.5px solid #1a2236",
+              <button key={k} onClick={()=>setNr(k)} style={{flex:1,padding:5,borderRadius:5,border:nr===k?"1.5px solid "+v.color:"1.5px solid #2a3548",
                 background:nr===k?v.color+"22":"transparent",color:nr===k?"#e2e8f0":"#475569",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{v.icon} {v.label}</button>
             ))}
           </div>
@@ -548,20 +552,20 @@ function UsersView({onBack}){
   );
 }
 
-function HB({icon,onClick}){return <button onClick={onClick} style={{background:"#111827",border:"1px solid #1a2236",color:"#94a3b8",width:28,height:28,borderRadius:6,fontSize:12,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>{icon}</button>;}
-function TB({label,bg,fg,onClick}){return <button onClick={onClick} style={{padding:"3px 7px",borderRadius:4,border:"none",background:bg,color:fg,fontSize:8,fontWeight:600,cursor:"pointer",fontFamily:"Tajawal,sans-serif",whiteSpace:"nowrap"}}>{label}</button>;}
-function SC({i,l,v,s,c}){return <div style={{background:"#111827",borderRadius:8,padding:10,border:"1px solid #1a2236"}}><div style={{fontSize:9,color:"#475569"}}>{i} {l}</div><div style={{display:"flex",alignItems:"baseline",gap:4}}><span style={{fontSize:20,fontWeight:800,color:c}}>{v}</span>{s&&<span style={{fontSize:10,color:"#475569"}}>{s}</span>}</div></div>;}
-function PB({v,t,c}){return <div style={{height:4,background:"#1a2236",borderRadius:2,overflow:"hidden"}}><div style={{height:"100%",width:(t?v/t*100:0)+"%",background:c,borderRadius:2,transition:"width 0.3s"}}/></div>;}
+function HB({icon,onClick}){return <button onClick={onClick} style={{background:"#1a2436",border:"1px solid #334155",color:"#e2e8f0",width:36,height:36,borderRadius:9,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>{icon}</button>;}
+function TB({label,bg,fg,onClick}){return <button onClick={onClick} style={{padding:"6px 10px",borderRadius:6,border:"none",background:bg,color:fg,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"Tajawal,sans-serif",whiteSpace:"nowrap"}}>{label}</button>;}
+function SC({i,l,v,s,c}){return <div style={{background:"#1a2436",borderRadius:8,padding:10,border:"1px solid #2a3548"}}><div style={{fontSize:9,color:"#94a3b8"}}>{i} {l}</div><div style={{display:"flex",alignItems:"baseline",gap:4}}><span style={{fontSize:20,fontWeight:800,color:c}}>{v}</span>{s&&<span style={{fontSize:10,color:"#94a3b8"}}>{s}</span>}</div></div>;}
+function PB({v,t,c}){return <div style={{height:4,background:"#2a3548",borderRadius:2,overflow:"hidden"}}><div style={{height:"100%",width:(t?v/t*100:0)+"%",background:c,borderRadius:2,transition:"width 0.3s"}}/></div>;}
 
 const S={
-  loginWrap:{minHeight:"100vh",background:"#080d19",display:"flex",alignItems:"center",justifyContent:"center",padding:16,fontFamily:"Tajawal,sans-serif"},
-  loginCard:{background:"#111827",borderRadius:12,padding:20,width:"100%",maxWidth:340,border:"1px solid #1a2236"},
-  lbl:{fontSize:10,color:"#475569",fontWeight:600},
-  inp:{width:"100%",padding:"9px 11px",borderRadius:7,border:"1px solid #1a2236",background:"#080d19",color:"#e2e8f0",fontSize:13,fontFamily:"Tajawal,sans-serif",outline:"none"},
-  pBtn:{width:"100%",padding:10,borderRadius:7,border:"none",background:"#1d4ed8",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"Tajawal,sans-serif"},
-  hdr:{background:"#0c1222",padding:"7px 10px",borderBottom:"1px solid #1a2236",position:"sticky",top:0,zIndex:100},
-  sub:{padding:"5px 10px 2px",background:"#080d19",position:"sticky",top:72,zIndex:99},
-  bkBtn:{background:"#111827",border:"1px solid #1a2236",color:"#94a3b8",padding:"5px 12px",borderRadius:6,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"Tajawal,sans-serif"},
-  card:{background:"#111827",borderRadius:9,padding:12,border:"1px solid #1a2236",marginBottom:6},
-  uCard:{background:"#111827",borderRadius:7,padding:9,marginBottom:3,border:"1px solid #1a2236",display:"flex",justifyContent:"space-between",alignItems:"center"},
+  loginWrap:{minHeight:"100vh",background:"#0b1221",display:"flex",alignItems:"center",justifyContent:"center",padding:16,fontFamily:"Tajawal,sans-serif"},
+  loginCard:{background:"#1a2436",borderRadius:14,padding:26,width:"100%",maxWidth:340,border:"1px solid #2a3548"},
+  lbl:{fontSize:10,color:"#94a3b8",fontWeight:600},
+  inp:{width:"100%",padding:"11px 14px",borderRadius:9,border:"1.5px solid #334155",background:"#0f172a",color:"#f1f5f9",fontSize:14,fontFamily:"Tajawal,sans-serif",outline:"none"},
+  pBtn:{width:"100%",padding:13,borderRadius:9,border:"none",background:"#2563eb",color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"Tajawal,sans-serif"},
+  hdr:{background:"#111a2e",padding:"10px 12px",borderBottom:"1px solid #2a3548",position:"sticky",top:0,zIndex:100},
+  sub:{padding:"8px 12px 4px",background:"#0b1221",position:"sticky",top:90,zIndex:99},
+  bkBtn:{background:"#1a2436",border:"1px solid #2a3548",color:"#94a3b8",padding:"5px 12px",borderRadius:6,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"Tajawal,sans-serif"},
+  card:{background:"#1a2436",borderRadius:9,padding:12,border:"1px solid #2a3548",marginBottom:6},
+  uCard:{background:"#1a2436",borderRadius:7,padding:9,marginBottom:3,border:"1px solid #2a3548",display:"flex",justifyContent:"space-between",alignItems:"center"},
 };
